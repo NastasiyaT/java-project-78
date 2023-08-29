@@ -1,37 +1,28 @@
 package hexlet.code.schemas;
 
-import lombok.NoArgsConstructor;
+import java.util.Objects;
 
-@NoArgsConstructor
-public class StringSchema implements Schema {
-    private boolean validationResult = true;
-    private String line;
+public class StringSchema extends BaseSchema {
 
-    public boolean isValid(Object obj) {
-        if (obj != null) {
-            line = obj.toString();
-        }
-        return validationResult;
+    public StringSchema() {
+        super();
+        addCheck(item -> item instanceof String || Objects.isNull(item));
     }
 
+    @Override
     public StringSchema required() {
-        if (line == null || line.isEmpty()) {
-            validationResult = false;
-        }
+        super.required();
+        addCheck(item -> !item.equals(""));
         return this;
     }
 
     public StringSchema minLength(int length) {
-        if (line.length() < length) {
-            validationResult = false;
-        }
+        addCheck(item -> Objects.nonNull(item) && ((String) item).length() >= length);
         return this;
     }
 
     public StringSchema contains(String phrase) {
-        if (!line.contains(phrase)) {
-            validationResult = false;
-        }
+        addCheck(item -> Objects.nonNull(item) && ((String) item).contains(phrase));
         return this;
     }
 }
