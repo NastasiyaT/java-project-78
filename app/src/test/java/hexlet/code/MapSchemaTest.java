@@ -1,5 +1,6 @@
 package hexlet.code;
 
+import hexlet.code.schemas.BaseSchema;
 import hexlet.code.schemas.MapSchema;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -46,6 +47,15 @@ public class MapSchemaTest {
         assertTrue(schema.isValid(items1));
         assertTrue(schema.required().isValid(items1));
         assertTrue(schema.sizeof(MAP_SIZE).isValid(items1));
+        assertFalse(schema.isValid("new value"));
         assertFalse(schema.sizeof(MAP_SIZE).isValid(items2));
+
+        Map<String, BaseSchema> checks = Map.of(
+                "key1", new Validator().string().required().contains("val"),
+                "key2", new Validator().number().positive()
+        );
+
+        assertTrue(schema.shape(checks).isValid(items1));
+        assertFalse(schema.shape(checks).isValid(items2));
     }
 }

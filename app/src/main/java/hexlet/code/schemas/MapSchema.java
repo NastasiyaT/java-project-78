@@ -21,4 +21,13 @@ public class MapSchema extends BaseSchema {
         addCheck(item -> Objects.nonNull(item) && ((Map<?, ?>) item).size() == quantity);
         return this;
     }
+
+    public MapSchema shape(Map<String, BaseSchema> schemas) {
+        addCheck(mapItem -> Objects.nonNull(mapItem) &&
+                schemas.entrySet().stream().allMatch(check -> {
+                            Object value = ((Map<?, ?>)mapItem).get(check.getKey());
+                            return check.getValue().isValid(value);
+                        }));
+        return this;
+    }
 }
