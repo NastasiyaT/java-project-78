@@ -23,11 +23,11 @@ public class MapSchema extends BaseSchema {
     }
 
     public MapSchema shape(Map<String, BaseSchema> schemas) {
-        addCheck(mapItem -> Objects.nonNull(mapItem) &&
-                schemas.entrySet().stream().allMatch(check -> {
-                            Object value = ((Map<?, ?>)mapItem).get(check.getKey());
-                            return check.getValue().isValid(value);
-                        }));
+        addCheck(mapItem -> Objects.nonNull(mapItem)
+                && schemas.entrySet().stream().allMatch(check -> {
+                    Object value = ((Map<?, ?>) mapItem).get(check.getKey());
+                    return check.getValue().isValid(value);
+                }));
         return this;
     }
 }
