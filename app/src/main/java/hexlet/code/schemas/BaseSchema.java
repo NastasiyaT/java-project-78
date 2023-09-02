@@ -13,11 +13,21 @@ public abstract class BaseSchema {
         this.checks = new ArrayList<>();
     }
 
+    /**
+     * Applies all check conditions to the object.
+     * @param item object to validate
+     * @return result if the object meets conditions in the schema or not
+     */
     public boolean isValid(Object item) {
         return checks.stream()
                 .allMatch(i -> i.test(item));
     }
 
+    /**
+     * Updates current schema.
+     * Adds new basic condition to check if the object isn't null.
+     * @return renewed schema
+     */
     public BaseSchema required() {
         addCheck(Objects::nonNull);
         return this;
