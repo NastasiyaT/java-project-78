@@ -2,10 +2,7 @@ package hexlet.code;
 
 import hexlet.code.schemas.BaseSchema;
 import hexlet.code.schemas.MapSchema;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.NullSource;
 
 import java.util.Map;
 
@@ -14,48 +11,66 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MapSchemaTest {
 
+    private static final Object ITEMS_NULL = null;
     private static final int MAP_SIZE = 3;
 
-    private MapSchema schema;
+    private static final Map<String, Object> ITEMS_CORRECT = Map.of(
+            "key1", "value1",
+            "key2", MAP_SIZE,
+            "key3", false
+    );
 
-    @BeforeEach
-    void getSchema() {
-        schema = new Validator().map();
-    }
+    private static final Map<String, Object> ITEMS_INCORRECT = Map.of(
+            "key1", "value1",
+            "key2", false
+    );
 
-    @ParameterizedTest
-    @NullSource
-    void testMapSchemaNullValue(Object obj) {
-        assertTrue(schema.isValid(obj));
-        assertFalse(schema.required().isValid(obj));
-        assertFalse(schema.sizeof(MAP_SIZE).isValid(obj));
+    @Test
+    void testIsValid() {
+        MapSchema schema1 = new Validator().map();
+
+        assertTrue(schema1.isValid(ITEMS_NULL));
+        assertTrue(schema1.isValid(ITEMS_CORRECT));
+        assertFalse(schema1.isValid(MAP_SIZE));
     }
 
     @Test
-    void testMapSchema() {
-        Map<String, Object> items1 = Map.of(
-                "key1", "value1",
-                "key2", MAP_SIZE,
-                "key3", false
-        );
+    void testRequired() {
+        MapSchema schema2 = new Validator().map().required();
 
-        Map<String, Object> items2 = Map.of(
-                "key1", "value1",
-                "key3", false
-        );
+        assertFalse(schema2.isValid(ITEMS_NULL));
+        assertTrue(schema2.isValid(ITEMS_CORRECT));
+    }
 
-        assertTrue(schema.isValid(items1));
-        assertTrue(schema.required().isValid(items1));
-        assertTrue(schema.sizeof(MAP_SIZE).isValid(items1));
-        assertFalse(schema.isValid("new value"));
-        assertFalse(schema.sizeof(MAP_SIZE).isValid(items2));
+    @Test
+    void testSizeof() {
+        MapSchema schema3 = new Validator().map().sizeof(MAP_SIZE);
 
-        Map<String, BaseSchema> checks = Map.of(
-                "key1", new Validator().string().required().contains("val"),
+        assertTrue(schema3.isValid(ITEMS_NULL));
+        assertTrue(schema3.isValid(ITEMS_CORRECT));
+        assertFalse(schema3.isValid(ITEMS_INCORRECT));
+    }
+
+    @Test
+    void testShape() {
+        Map<String, BaseSchema> checksValid = Map.of(
+                "key1", new Validator().string().required(),
                 "key2", new Validator().number().positive()
         );
 
-        assertTrue(schema.shape(checks).isValid(items1));
-        assertFalse(schema.shape(checks).isValid(items2));
+        MapSchema schema4 = new Validator().map().shape(checksValid);
+
+        assertTrue(schema4.isValid(ITEMS_NULL));
+        assertTrue(schema4.isValid(ITEMS_CORRECT));
+        assertFalse(schema4.isValid(ITEMS_INCORRECT));
+
+        Map<String, BaseSchema> checksInvalid = Map.of(
+                "key1", new Validator().string().required(),
+                "key3", new Validator().number()
+        );
+
+        MapSchema schema5 = new Validator().map().shape(checksInvalid);
+
+        assertFalse(schema5.isValid(ITEMS_CORRECT));
     }
 }

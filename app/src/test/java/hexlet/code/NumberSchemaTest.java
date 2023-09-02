@@ -1,57 +1,62 @@
 package hexlet.code;
 
 import hexlet.code.schemas.NumberSchema;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.NullSource;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NumberSchemaTest {
 
-    private static final int MIN_VALUE = 2;
-    private static final int MAX_VALUE = 90;
+    private static final Object ITEM_NULL = null;
+    private static final int ITEM_BASIC = 31;
+    private static final int ITEM_EXTREME = 109;
+    private static final int ITEM_ZERO = 0;
+    private static final int ITEM_NEGATIVE = -6;
+    private static final String ITEM_LINE = "no way";
 
-    private NumberSchema schema;
+    private static final int NUMBER_FROM = 2;
+    private static final int NUMBER_TO = 90;
 
-    @BeforeEach
-    void getSchema() {
-        schema = new Validator().number();
-    }
+    @Test
+    void testIsValid() {
+        NumberSchema schema1 = new Validator().number();
 
-    @ParameterizedTest
-    @NullSource
-    void testNumberSchemaNullValue(Object obj) {
-        assertTrue(schema.isValid(obj));
-        assertFalse(schema.required().isValid(obj));
-        assertFalse(schema.positive().isValid(obj));
-        assertFalse(schema.range(MIN_VALUE, MAX_VALUE).isValid(obj));
+        assertTrue(schema1.isValid(ITEM_NULL));
+        assertTrue(schema1.isValid(ITEM_BASIC));
+        assertTrue(schema1.isValid(ITEM_ZERO));
+        assertTrue(schema1.isValid(ITEM_NEGATIVE));
+        assertFalse(schema1.isValid(ITEM_LINE));
     }
 
     @Test
-    void testNumberSchema() {
-        final int item1 = 31;
-        final int item2 = 109;
-        final int item3 = 0;
-        final int item4 = -6;
+    void testRequired() {
+        NumberSchema schema2 = new Validator().number().required();
 
-        assertTrue(schema.isValid(item1));
-        assertTrue(schema.isValid(item3));
-        assertTrue(schema.isValid(item4));
-        assertFalse(schema.isValid("nice"));
+        assertFalse(schema2.isValid(ITEM_NULL));
+        assertTrue(schema2.isValid(ITEM_BASIC));
+        assertTrue(schema2.isValid(ITEM_ZERO));
+        assertTrue(schema2.isValid(ITEM_NEGATIVE));
+    }
 
-        assertTrue(schema.required().isValid(item1));
-        assertTrue(schema.required().isValid(item3));
-        assertTrue(schema.required().isValid(item4));
+    @Test
+    void testPositive() {
+        NumberSchema schema3 = new Validator().number().positive();
 
-        assertTrue(schema.required().positive().isValid(item1));
-        assertFalse(schema.required().positive().isValid(item3));
-        assertFalse(schema.required().positive().isValid(item4));
+        assertTrue(schema3.isValid(ITEM_NULL));
+        assertTrue(schema3.isValid(ITEM_BASIC));
+        assertFalse(schema3.isValid(ITEM_ZERO));
+        assertFalse(schema3.isValid(ITEM_NEGATIVE));
+    }
 
-        assertTrue(schema.required().range(MIN_VALUE, MAX_VALUE).isValid(item1));
-        assertFalse(schema.required().range(MIN_VALUE, MAX_VALUE).isValid(item2));
-        assertFalse(schema.required().range(MIN_VALUE, MAX_VALUE).isValid(item4));
+    @Test
+    void testRange() {
+        NumberSchema schema4 = new Validator().number().range(NUMBER_FROM, NUMBER_TO);
+
+        assertTrue(schema4.isValid(ITEM_NULL));
+        assertTrue(schema4.isValid(ITEM_BASIC));
+        assertFalse(schema4.isValid(ITEM_ZERO));
+        assertFalse(schema4.isValid(ITEM_NEGATIVE));
+        assertFalse(schema4.isValid(ITEM_EXTREME));
     }
 }

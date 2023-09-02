@@ -6,7 +6,7 @@ public class NumberSchema extends BaseSchema {
 
     public NumberSchema() {
         super();
-        addCheck(item -> item instanceof Integer || Objects.isNull(item));
+        addCheck(item -> Objects.isNull(item) || item instanceof Integer);
     }
 
     @Override
@@ -16,12 +16,12 @@ public class NumberSchema extends BaseSchema {
     }
 
     public NumberSchema positive() {
-        addCheck(item -> Objects.nonNull(item) && (Integer) item > 0);
+        addCheck(item -> Objects.isNull(item) || (Integer) item > 0);
         return this;
     }
 
     public NumberSchema range(int from, int to) {
-        addCheck(item -> Objects.nonNull(item) && (Integer) item >= from && (Integer) item <= to);
+        addCheck(item -> Objects.isNull(item) || (Integer) item >= from && (Integer) item <= to);
         return this;
     }
 }
