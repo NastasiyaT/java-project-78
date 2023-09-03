@@ -14,7 +14,7 @@ Schema to validate **Integer.class** objects. It also has two specific methods:
 - to check if the number is positive,
 - to verify that the number falls within the defined range.
 
-#### MapSchems
+#### MapSchema
 Schema to validate **Map.class** objects. It has two additional methods:
 - to define total number of entries,
 - to validate entry values according to the schema chosen specifically for every key.
