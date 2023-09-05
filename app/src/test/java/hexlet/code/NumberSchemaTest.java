@@ -8,55 +8,64 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NumberSchemaTest {
 
-    private static final Object ITEM_NULL = null;
-    private static final int ITEM_BASIC = 31;
-    private static final int ITEM_EXTREME = 109;
-    private static final int ITEM_ZERO = 0;
-    private static final int ITEM_NEGATIVE = -6;
-    private static final String ITEM_LINE = "no way";
-
-    private static final int NUMBER_FROM = 2;
-    private static final int NUMBER_TO = 90;
-
     @Test
     void testIsValid() {
+        final int number = 31;
+        final int zero = 0;
+        final int negative = -6;
+
         NumberSchema schema1 = new Validator().number();
 
-        assertTrue(schema1.isValid(ITEM_NULL));
-        assertTrue(schema1.isValid(ITEM_BASIC));
-        assertTrue(schema1.isValid(ITEM_ZERO));
-        assertTrue(schema1.isValid(ITEM_NEGATIVE));
-        assertFalse(schema1.isValid(ITEM_LINE));
+        assertTrue(schema1.isValid(null));
+        assertTrue(schema1.isValid(number));
+        assertTrue(schema1.isValid(zero));
+        assertTrue(schema1.isValid(negative));
+        assertFalse(schema1.isValid("no way"));
     }
 
     @Test
     void testRequired() {
+        final int number = 31;
+        final int zero = 0;
+        final int negative = -6;
+
         NumberSchema schema2 = new Validator().number().required();
 
-        assertFalse(schema2.isValid(ITEM_NULL));
-        assertTrue(schema2.isValid(ITEM_BASIC));
-        assertTrue(schema2.isValid(ITEM_ZERO));
-        assertTrue(schema2.isValid(ITEM_NEGATIVE));
+        assertFalse(schema2.isValid(null));
+        assertTrue(schema2.isValid(number));
+        assertTrue(schema2.isValid(zero));
+        assertTrue(schema2.isValid(negative));
     }
 
     @Test
     void testPositive() {
+        final int number = 31;
+        final int zero = 0;
+        final int negative = -6;
+
         NumberSchema schema3 = new Validator().number().positive();
 
-        assertTrue(schema3.isValid(ITEM_NULL));
-        assertTrue(schema3.isValid(ITEM_BASIC));
-        assertFalse(schema3.isValid(ITEM_ZERO));
-        assertFalse(schema3.isValid(ITEM_NEGATIVE));
+        assertTrue(schema3.isValid(null));
+        assertTrue(schema3.isValid(number));
+        assertFalse(schema3.isValid(zero));
+        assertFalse(schema3.isValid(negative));
     }
 
     @Test
     void testRange() {
-        NumberSchema schema4 = new Validator().number().range(NUMBER_FROM, NUMBER_TO);
+        final int number = 31;
+        final int numberFalse = 109;
+        final int zero = 0;
+        final int negative = -6;
 
-        assertTrue(schema4.isValid(ITEM_NULL));
-        assertTrue(schema4.isValid(ITEM_BASIC));
-        assertFalse(schema4.isValid(ITEM_ZERO));
-        assertFalse(schema4.isValid(ITEM_NEGATIVE));
-        assertFalse(schema4.isValid(ITEM_EXTREME));
+        final int min = 2;
+        final int max = 90;
+        NumberSchema schema4 = new Validator().number().range(min, max);
+
+        assertTrue(schema4.isValid(null));
+        assertTrue(schema4.isValid(number));
+        assertFalse(schema4.isValid(zero));
+        assertFalse(schema4.isValid(negative));
+        assertFalse(schema4.isValid(numberFalse));
     }
 }
